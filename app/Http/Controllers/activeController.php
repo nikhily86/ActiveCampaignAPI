@@ -183,20 +183,30 @@ class activeController extends Controller
 
     function deleteData($id)
     {
-      $response1 = Http::withHeaders([
+      $response = Http::withHeaders([
         'Api-Token' => '8e84dd1743fe4397954da16e76cb64acaaa4d368f5d9ffbc9c190ae6b0e6fd668a64e7fd',
         'api_action'   => 'contact_delete',
         'Content-Type' => 'application/json'
       ])->delete("https://vkaps13097.api-us1.com/api/3/contacts/$id");
 
-      $response = Http::withHeaders([
-        'Api-Token' => '8e84dd1743fe4397954da16e76cb64acaaa4d368f5d9ffbc9c190ae6b0e6fd668a64e7fd',
-        'api_action'   => 'contact_view',
-        'Content-Type' => 'application/json'
-      ])->get("https://vkaps13097.api-us1.com/api/3/contacts");
+      $status = $response->status();
 
-      $results = $response->json();
+      if($status >= 200 && $status <300)
+      {
 
-      return view ('display', ['result'=>$results]);
+        $response = Http::withHeaders([
+          'Api-Token' => '8e84dd1743fe4397954da16e76cb64acaaa4d368f5d9ffbc9c190ae6b0e6fd668a64e7fd',
+          'api_action'   => 'contact_view',
+          'Content-Type' => 'application/json'
+        ])->get("https://vkaps13097.api-us1.com/api/3/contacts");
+  
+        $status = $response->status(); // Get Status Code
+  
+        $results = $response->json();  // Get Response
+
+        return redirect('getData');
+      }
+
+      
     }
 }
